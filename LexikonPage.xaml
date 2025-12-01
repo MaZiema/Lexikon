@@ -1,0 +1,190 @@
+﻿<Page x:Class="Lexikon.LexikonPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Lexikon"      
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="LexikonPage">
+    
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#2E7D32"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="5,2"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="MinHeight" Value="35"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="6"
+                        SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Hover -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#43A047"/>
+                            </Trigger>
+                            <!-- Pressed -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1B5E20"/>
+                                <Setter TargetName="border" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="Black" BlurRadius="5" ShadowDepth="1" Opacity="0.2"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <!-- Disabled -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#BDBDBD"/>
+                                <Setter Property="Foreground" Value="#757575"/>
+                                <Setter TargetName="border" Property="Effect" Value="{x:Null}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Optional: Standard DropShadow für alle Buttons -->
+        <DropShadowEffect x:Key="DropShadowEffect" Color="Black" BlurRadius="5" ShadowDepth="2" Opacity="0.2"/> 
+    </Page.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <UniformGrid Rows="1" Columns="4" Grid.Row="0" Margin="0,0,0,10" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+
+            <!-- Name -->
+            <Grid Margin="0,0,5,0">
+                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="4">
+                    <TextBox x:Name="NameBox" Padding="5" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0"/>
+                </Border>
+                <TextBlock Text="Enter a name..."
+                           Foreground="Gray"
+                           Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           IsHitTestVisible="False"
+                           Visibility="{Binding Text.IsEmpty, ElementName=NameBox, 
+                           Converter={StaticResource BoolToVisibilityConverter}}" 
+                           />
+            </Grid>
+
+            <!-- Description -->
+            <Grid Margin="0,0,5,0">
+                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="4">
+                    <TextBox x:Name="DescriptionBox" Padding="5" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0"/>
+                </Border>
+                <TextBlock Text="Enter a description..."
+                           Foreground="Gray"
+                           Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           IsHitTestVisible="False"
+                           Visibility="{Binding Text.IsEmpty, ElementName=DescriptionBox, 
+                           Converter={StaticResource BoolToVisibilityConverter}}" 
+                           />
+            </Grid>
+
+            <!-- Synonyme -->
+            <Grid Margin="0,0,5,0">
+                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="4">
+                    <TextBox x:Name="SynonymeBox" Padding="5" VerticalContentAlignment="Center" Background="Transparent" BorderThickness="0"/>
+                </Border>
+                <TextBlock Text="Enter a Synonyme..."
+                           Foreground="Gray"
+                           Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           IsHitTestVisible="False"
+                           Visibility="{Binding Text.IsEmpty, ElementName=SynonymeBox, 
+                           Converter={StaticResource BoolToVisibilityConverter}}" 
+                           />
+            </Grid>
+
+            <!-- Add Button -->
+            <Button Content="Add" Style="{StaticResource ModernButtonStyle}" Click="Button_Click"/>
+        </UniformGrid>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+            <Button Name="Delete_Btn" Content="Delete" Style="{StaticResource ModernButtonStyle}" IsEnabled="False" Click="Delete_Btn_Click"/>
+            <Button Name="Show_Btn" Content="Show" Style="{StaticResource ModernButtonStyle}" Click="Show_Btn_Click"/>
+        </StackPanel>
+
+        <!-- DataGrid -->
+        <DataGrid x:Name="LexiconGrid"
+                  Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  EnableRowVirtualization="True"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ItemsSource="{Binding Entrys}"
+                  Visibility="Hidden"
+                  GridLinesVisibility="None"
+                  HeadersVisibility="Column"
+                  RowHeight="50"
+                  Background="#FAFAFA"
+                  BorderBrush="#DDDDDD"
+                  BorderThickness="1"
+                  CanUserResizeColumns="True"
+                  CanUserResizeRows="False"
+                  CanUserSortColumns="True"
+                  >
+
+            <DataGrid.Resources>
+                <!-- Hover-Farbe -->
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#FF6E9770"/>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontWeight" Value="Normal"/>
+                    <Setter Property="Height" Value="50"/>
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FF8BC98E"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#FF5C9A5F"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
+
+            <DataGrid.Columns>
+                <!-- Name -->
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200"/>
+
+                <!-- Description mit Textumbruch -->
+                <DataGridTemplateColumn Header="Description" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Description}" 
+                               TextWrapping="Wrap"                                
+                               Padding="5"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Synonyme -->
+                <DataGridTextColumn Header="Synonyme" Binding="{Binding Synonyme}" Width="200"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>
